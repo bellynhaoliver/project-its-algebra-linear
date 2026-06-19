@@ -1,0 +1,13 @@
+{
+  "name": "its-algebra-linear",
+  "version": "1.0.0",
+  "description": "Sistema Tutor Inteligente para Álgebra Linear — MVP",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  }
+}

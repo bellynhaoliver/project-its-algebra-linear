@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ITS — Álgebra Linear</title>
+<!-- MathJax para renderização de LaTeX / matrizes -->
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']], processEscapes: true },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
+  startup: { typeset: false }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+/* ─────────────────────────────────────────────────────────
+   DESIGN SYSTEM — ITS Álgebra Linear
+   Paleta: fundo off-white suave, azul-índigo como cor
+   primária, verde-menta para sucesso, âmbar para atenção.
+   Tipografia amigável, espaçamento generoso — estudantes
+   do início da graduação precisam de clareza, não de densidade.
+──────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Backgrounds */
+  --bg-page:    #F5F6FA;
+  --bg-card:    #FFFFFF;
+  --bg-subtle:  #EEF0F7;
+  --bg-input:   #F9FAFB;
+
+  /* Primária — índigo */
+  --indigo-50:  #EEF2FF;
+  --indigo-100: #E0E7FF;
+  --indigo-200: #C7D2FE;
+  --indigo-400: #818CF8;
+  --indigo-500: #6366F1;
+  --indigo-600: #4F46E5;
+  --indigo-700: #4338CA;
+
+  /* Sucesso — verde-esmeralda */
+  --green-50:   #ECFDF5;
+  --green-100:  #D1FAE5;
+  --green-500:  #10B981;
+  --green-600:  #059669;
+  --green-700:  #047857;
+
+  /* Atenção — âmbar */
+  --amber-50:   #FFFBEB;
+  --amber-100:  #FEF3C7;
+  --amber-500:  #F59E0B;
+  --amber-600:  #D97706;
+
+  /* Perigo — rosa-coral */
+  --red-50:     #FFF1F2;
+  --red-100:    #FFE4E6;
+  --red-500:    #F43F5E;
+  --red-600:    #E11D48;
+
+  /* Neutros */
+  --gray-50:    #F9FAFB;
+  --gray-100:   #F3F4F6;
+  --gray-200:   #E5E7EB;
+  --gray-300:   #D1D5DB;
+  --gray-400:   #9CA3AF;
+  --gray-500:   #6B7280;
+  --gray-600:   #4B5563;
+  --gray-700:   #374151;
+  --gray-800:   #1F2937;
+  --gray-900:   #111827;
+
+  /* Violeta para vetores */
+  --violet-50:  #F5F3FF;
+  --violet-100: #EDE9FE;
+  --violet-500: #8B5CF6;
+  --violet-600: #7C3AED;
+
+  /* Tipografia */
+  --font: 'Inter', -apple-system, system-ui, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Bordas e sombras */
+  --border:     #E5E7EB;
+  --border-md:  #D1D5DB;
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:  0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06);
+
+  --radius:     10px;
+  --radius-lg:  16px;
+  --radius-xl:  20px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-page);
+  color: var(--gray-800);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── TELAS ──────────────────────────────────────────────── */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; }
+
+/* ─── LOGIN ──────────────────────────────────────────────── */
+#screen-login {
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 20%, var(--indigo-100) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 20% 80%, var(--violet-100) 0%, transparent 50%),
+    var(--bg-page);
+}
+
+.login-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 52px 48px;
+  width: 440px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--indigo-500), var(--violet-500));
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.logo-row { display: flex; align-items: center; gap: 14px; margin-bottom: 36px; }
+.logo-icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, var(--indigo-500), var(--violet-500));
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: white;
+  box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+}
+.logo-text { font-size: 20px; font-weight: 700; color: var(--gray-900); }
+.logo-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+.login-title { font-size: 24px; font-weight: 700; color: var(--gray-900); margin-bottom: 10px; }
+.login-desc { color: var(--gray-500); font-size: 14px; margin-bottom: 32px; line-height: 1.65; }
+
+.field-label { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px; display: block; }
+
+.text-input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-md);
+  border-radius: var(--radius);
+  padding: 11px 16px;
+  color: var(--gray-900);
+  font-size: 15px;
+  font-family: var(--font);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.text-input:focus {
+  border-color: var(--indigo-400);
+  box-shadow: 0 0 0 3px var(--indigo-100);
+}
+.text-input::placeholder { color: var(--gray-400); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 22px;
+  border-radius: var(--radius);
+  font-size: 14px; font-weight: 600; font-family: var(--font);
+  cursor: pointer; border: none;
+  transition: all 0.15s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--indigo-600), var(--indigo-500));
+  color: #fff; width: 100%; margin-top: 22px; padding: 13px;
+  font-size: 15px;
+  box-shadow: 0 4px 12px rgba(99,102,241,0.35);
+}
+.btn-primary:hover { background: linear-gradient(135deg, var(--indigo-700), var(--indigo-600)); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(99,102,241,0.4); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.btn-secondary {
+  background: var(--bg-card); color: var(--gray-700);
+  border: 1.5px solid var(--border-md);
+}
+.btn-secondary:hover { border-color: var(--gray-400); background: var(--gray-50); }
+
+.btn-success {
+  background: linear-gradient(135deg, var(--green-600), var(--green-500));
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+}
+.btn-success:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(16,185,129,0.4); }
+
+/* ─── NAV ────────────────────────────────────────────────── */
+#screen-app { flex-direction: column; }
+
+.app-nav {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 16px; color: var(--gray-900); }
+.nav-logo-icon {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--indigo-500), var(--violet-500));
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: white;
+}
+
+.nav-tabs { display: flex; gap: 2px; background: var(--gray-100); padding: 4px; border-radius: 10px; }
+.nav-tab {
+  padding: 7px 18px; border-radius: 7px; font-size: 13px; font-weight: 600;
+  cursor: pointer; color: var(--gray-500); transition: all 0.18s;
+  border: none; background: transparent;
+}
+.nav-tab:hover { color: var(--gray-800); }
+.nav-tab.active { color: var(--indigo-700); background: var(--bg-card); box-shadow: var(--shadow-sm); }
+
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.avatar {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--violet-500), var(--indigo-500));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: white;
+  box-shadow: 0 2px 8px rgba(139,92,246,0.3);
+}
+.student-name-nav { font-size: 13px; font-weight: 500; color: var(--gray-600); }
+
+/* ─── APP BODY ───────────────────────────────────────────── */
+.app-body { flex: 1; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ─── TAGS ───────────────────────────────────────────────── */
+.tag {
+  display: inline-flex; align-items: center; padding: 3px 9px;
+  border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
+}
+.tag-matrix { background: var(--indigo-100); color: var(--indigo-700); }
+.tag-vector { background: var(--violet-100); color: var(--violet-600); }
+
+/* ─── ASSESSMENT ─────────────────────────────────────────── */
+.assessment-wrap { max-width: 740px; margin: 0 auto; padding: 44px 28px; }
+.assess-header { margin-bottom: 36px; }
+.assess-header h1 { font-size: 26px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+.assess-header p { color: var(--gray-500); font-size: 14px; line-height: 1.7; }
+
+.progress-row { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; }
+.progress-track {
+  flex: 1; height: 8px;
+  background: var(--gray-200); border-radius: 4px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--indigo-500), var(--violet-500));
+  border-radius: 4px;
+  transition: width 0.4s cubic-bezier(.4,0,.2,1);
+}
+.progress-label { font-size: 13px; font-weight: 600; color: var(--gray-500); white-space: nowrap; }
+
+.question-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  box-shadow: var(--shadow-md);
+}
+
+.q-node-badge { margin-bottom: 20px; }
+.q-text { font-size: 19px; font-weight: 600; color: var(--gray-900); margin-bottom: 6px; line-height: 1.5; }
+.q-diff {
+  font-size: 12px; color: var(--gray-400); margin-bottom: 28px;
+  font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+.options { display: grid; gap: 10px; }
+.option {
+  padding: 15px 20px;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer; font-size: 14px; font-weight: 500;
+  transition: all 0.15s; text-align: left;
+  color: var(--gray-700); width: 100%;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.option:hover { border-color: var(--indigo-300); background: var(--indigo-50); color: var(--indigo-700); transform: translateX(2px); }
+.option.selected { border-color: var(--indigo-400); background: var(--indigo-50); color: var(--indigo-700); }
+.option.correct { border-color: var(--green-500); background: var(--green-50); color: var(--green-700); }
+.option.wrong { border-color: var(--red-500); background: var(--red-50); color: var(--red-600); }
+.option:disabled, .option.correct, .option.wrong { cursor: default; transform: none; }
+
+.option-letter {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--gray-200);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--gray-600); flex-shrink: 0;
+  transition: all 0.15s;
+}
+.option:hover .option-letter { background: var(--indigo-200); color: var(--indigo-700); }
+.option.selected .option-letter { background: var(--indigo-500); color: #fff; }
+.option.correct .option-letter { background: var(--green-500); color: #fff; }
+.option.wrong .option-letter { background: var(--red-500); color: #fff; }
+
+.feedback-box {
+  margin-top: 22px; padding: 16px 20px;
+  border-radius: var(--radius); font-size: 14px; line-height: 1.65;
+  display: none; font-weight: 500;
+}
+.feedback-box.correct { background: var(--green-50); border: 1.5px solid var(--green-500); color: var(--green-700); }
+.feedback-box.wrong { background: var(--red-50); border: 1.5px solid var(--red-500); color: var(--red-600); }
+
+.q-actions { margin-top: 26px; display: flex; justify-content: flex-end; gap: 10px; }
+
+/* ─── RESULT ─────────────────────────────────────────────── */
+.result-wrap { max-width: 820px; margin: 0 auto; padding: 44px 28px; }
+.result-hero {
+  background: linear-gradient(135deg, var(--indigo-600) 0%, var(--violet-600) 100%);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  margin-bottom: 28px;
+  display: flex; align-items: center; gap: 24px;
+  color: white;
+  box-shadow: 0 8px 32px rgba(99,102,241,0.3);
+}
+.result-icon { font-size: 60px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
+.result-title { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.result-subtitle { font-size: 14px; opacity: 0.85; }
+
+.score-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; margin-bottom: 28px; }
+.score-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s;
+}
+.score-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.score-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.score-card-id { font-size: 12px; font-weight: 600; }
+.score-card-pct { font-size: 22px; font-weight: 700; }
+.score-card-name { font-size: 13px; color: var(--gray-500); margin-bottom: 10px; }
+.mini-bar { height: 5px; background: var(--gray-200); border-radius: 3px; overflow: hidden; }
+.mini-fill { height: 100%; border-radius: 3px; transition: width 0.8s cubic-bezier(.4,0,.2,1); }
+
+/* ─── DASHBOARD ──────────────────────────────────────────── */
+.dashboard-wrap { padding: 32px 28px; max-width: 1240px; margin: 0 auto; }
+.dash-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.stat-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-sm);
+  position: relative; overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.stat-card:nth-child(1)::before { background: linear-gradient(90deg, var(--indigo-500), var(--violet-500)); }
+.stat-card:nth-child(2)::before { background: linear-gradient(90deg, var(--green-500), var(--green-600)); }
+.stat-card:nth-child(3)::before { background: linear-gradient(90deg, var(--amber-500), var(--amber-600)); }
+.stat-card:nth-child(4)::before { background: linear-gradient(90deg, var(--violet-500), var(--indigo-500)); }
+
+.stat-icon { font-size: 28px; margin-bottom: 10px; }
+.stat-label { font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.stat-value { font-size: 32px; font-weight: 700; color: var(--gray-900); line-height: 1; }
+.stat-sub { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+
+.dash-lower { display: grid; grid-template-columns: 1fr 380px; gap: 22px; }
+
+.panel {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  box-shadow: var(--shadow-sm);
+}
+.panel-title {
+  font-size: 15px; font-weight: 700; color: var(--gray-800);
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 8px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+/* Graph in dashboard */
+.graph-node {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 14px; border-radius: var(--radius);
+  border: 1.5px solid transparent;
+  cursor: pointer; transition: all 0.15s; margin-bottom: 2px;
+}
+.graph-node:hover { background: var(--gray-50); border-color: var(--border); }
+.graph-node.current { background: var(--indigo-50); border-color: var(--indigo-200); }
+.graph-connector { width: 2px; height: 14px; margin-left: 19px; background: var(--gray-200); border-radius: 1px; }
+.graph-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.graph-node-id { min-width: 44px; }
+.graph-node-name { font-size: 13px; font-weight: 500; color: var(--gray-700); flex: 1; }
+.graph-node-pct { font-size: 12px; font-weight: 600; }
+.graph-bar { height: 3px; background: var(--gray-200); border-radius: 2px; margin-top: 3px; overflow: hidden; }
+.graph-bar-fill { height: 100%; border-radius: 2px; transition: width 0.7s cubic-bezier(.4,0,.2,1); }
+
+.activity-item {
+  padding: 11px 0;
+  border-bottom: 1px solid var(--gray-100);
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.activity-text { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
+.activity-time { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+
+/* ─── CHAT ───────────────────────────────────────────────── */
+.chat-wrap { display: flex; height: calc(100vh - 60px); }
+
+.chat-sidebar {
+  width: 272px;
+  background: var(--bg-card);
+  border-right: 1.5px solid var(--border);
+  padding: 22px 18px;
+  display: flex; flex-direction: column; gap: 20px;
+  overflow-y: auto; flex-shrink: 0;
+}
+.chat-sidebar-label {
+  font-size: 11px; font-weight: 700;
+  color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em;
+  margin-bottom: 8px;
+}
+
+.current-concept-card {
+  background: linear-gradient(135deg, var(--indigo-50), var(--violet-50));
+  border: 1.5px solid var(--indigo-200);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+.cc-label { font-size: 11px; font-weight: 600; color: var(--indigo-500); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+.cc-id { font-size: 22px; font-weight: 800; color: var(--indigo-700); }
+.cc-name { font-size: 13px; color: var(--indigo-600); margin-top: 2px; font-weight: 500; }
+.mastery-bar-wrap { margin-top: 12px; }
+.mastery-label-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--indigo-600); margin-bottom: 6px; font-weight: 600; }
+.mastery-track { height: 7px; background: var(--indigo-100); border-radius: 4px; overflow: hidden; }
+.mastery-fill { height: 100%; border-radius: 4px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+
+.mini-graph-list { display: flex; flex-direction: column; gap: 2px; }
+.mg-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 6px 8px; border-radius: 8px;
+  font-size: 12px; font-weight: 500; color: var(--gray-500);
+  cursor: pointer; transition: background 0.1s;
+}
+.mg-item:hover { background: var(--gray-100); }
+.mg-item.current { background: var(--indigo-50); color: var(--indigo-700); }
+.mg-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.mg-pct { margin-left: auto; font-size: 11px; font-weight: 600; }
+
+/* Chat main */
+.chat-main { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--bg-page); }
+
+.chat-header {
+  padding: 18px 28px;
+  background: var(--bg-card);
+  border-bottom: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+.chat-header-title { font-size: 16px; font-weight: 700; color: var(--gray-900); }
+.chat-header-sub { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+.tutor-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--green-600);
+  background: var(--green-50); border: 1.5px solid var(--green-200);
+  padding: 5px 12px; border-radius: 20px;
+}
+.status-dot {
+  width: 7px; height: 7px;
+  background: var(--green-500); border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--green-100);
+}
+
+.messages {
+  flex: 1; overflow-y: auto;
+  padding: 28px 28px 16px;
+  display: flex; flex-direction: column; gap: 18px;
+}
+
+.msg { display: flex; gap: 12px; }
+.msg.user { align-self: flex-end; flex-direction: row-reverse; max-width: 80%; }
+.msg.assistant { max-width: 88%; }
+
+.msg-avatar {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+}
+.msg.assistant .msg-avatar {
+  background: linear-gradient(135deg, var(--indigo-500), var(--violet-500));
+  color: white;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+}
+.msg.user .msg-avatar {
+  background: linear-gradient(135deg, var(--violet-500), var(--indigo-500));
+  color: white;
+  box-shadow: 0 2px 8px rgba(139,92,246,0.3);
+}
+
+.msg-bubble {
+  padding: 14px 18px;
+  font-size: 14px; line-height: 1.7;
+}
+.msg.assistant .msg-bubble {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: 4px 16px 16px 16px;
+  box-shadow: var(--shadow-sm);
+  color: var(--gray-800);
+}
+.msg.user .msg-bubble {
+  background: linear-gradient(135deg, var(--indigo-600), var(--indigo-500));
+  color: white;
+  border-radius: 16px 4px 16px 16px;
+  box-shadow: 0 4px 14px rgba(99,102,241,0.3);
+}
+
+/* Markdown dentro das mensagens */
+.msg-bubble strong { font-weight: 700; }
+.msg.assistant .msg-bubble strong { color: var(--indigo-700); }
+.msg.user .msg-bubble strong { color: rgba(255,255,255,0.95); }
+
+.msg-bubble em { font-style: italic; }
+.msg-bubble code {
+  font-family: var(--mono);
+  font-size: 13px; padding: 1px 6px;
+  border-radius: 5px;
+}
+.msg.assistant .msg-bubble code { background: var(--indigo-50); color: var(--indigo-700); border: 1px solid var(--indigo-200); }
+.msg.user .msg-bubble code { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); }
+
+/* Matrizes / blocos LaTeX */
+.math-block {
+  margin: 14px 0;
+  padding: 16px 20px;
+  background: var(--indigo-50);
+  border: 1.5px solid var(--indigo-200);
+  border-left: 4px solid var(--indigo-500);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  overflow-x: auto;
+  font-size: 15px;
+}
+.msg.user .math-block {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.4);
+  border-left-color: rgba(255,255,255,0.8);
+}
+
+.msg-bubble ul, .msg-bubble ol {
+  padding-left: 18px;
+  margin: 8px 0;
+}
+.msg-bubble li { margin-bottom: 4px; }
+
+.mastery-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 10px;
+  font-size: 12px; font-weight: 600;
+  padding: 4px 10px; border-radius: 20px;
+}
+.mastery-badge.up { background: var(--green-50); color: var(--green-700); border: 1.5px solid var(--green-200); }
+.mastery-badge.down { background: var(--red-50); color: var(--red-600); border: 1.5px solid var(--red-200); }
+
+/* Typing indicator */
+.typing-indicator { display: flex; align-items: center; gap: 5px; padding: 6px 4px; }
+.typing-dot {
+  width: 8px; height: 8px;
+  background: var(--indigo-400); border-radius: 50%;
+  animation: bounce 1.3s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.22s; }
+.typing-dot:nth-child(3) { animation-delay: 0.44s; }
+@keyframes bounce { 0%,60%,100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-7px); opacity: 1; } }
+
+/* Chat input */
+.chat-input-area {
+  padding: 14px 28px 20px;
+  background: var(--bg-card);
+  border-top: 1.5px solid var(--border);
+}
+.chat-hints { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.hint-btn {
+  font-size: 12px; font-weight: 500;
+  padding: 5px 12px;
+  background: var(--indigo-50); border: 1.5px solid var(--indigo-200);
+  border-radius: 20px; color: var(--indigo-600);
+  cursor: pointer; transition: all 0.15s;
+}
+.hint-btn:hover { background: var(--indigo-100); border-color: var(--indigo-400); }
+
+.chat-input-row { display: flex; gap: 10px; align-items: flex-end; }
+.chat-textarea {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-md);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  color: var(--gray-900);
+  font-size: 14px; font-family: var(--font);
+  resize: none; outline: none; line-height: 1.55;
+  min-height: 46px; max-height: 140px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.chat-textarea:focus {
+  border-color: var(--indigo-400);
+  box-shadow: 0 0 0 3px var(--indigo-100);
+}
+.chat-textarea::placeholder { color: var(--gray-400); }
+
+.send-btn {
+  width: 46px; height: 46px;
+  background: linear-gradient(135deg, var(--indigo-600), var(--indigo-500));
+  border: none; border-radius: var(--radius-lg);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.15s;
+  box-shadow: 0 4px 12px rgba(99,102,241,0.35);
+}
+.send-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(99,102,241,0.45); }
+.send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ─── TOAST ──────────────────────────────────────────────── */
+.toast {
+  position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+  background: var(--gray-900); color: white;
+  border-radius: var(--radius-lg); padding: 14px 20px;
+  font-size: 14px; font-weight: 500;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  display: flex; align-items: center; gap: 10px;
+  transform: translateY(90px); opacity: 0;
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+  pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.green { background: var(--green-700); }
+.toast.indigo { background: var(--indigo-600); }
+
+/* ─── ANIMAÇÕES ──────────────────────────────────────────── */
+@keyframes fadeUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+.fade-up { animation: fadeUp 0.3s cubic-bezier(.4,0,.2,1) forwards; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gray-400); }
+
+/* Divisor */
+hr.divider { border: none; border-top: 1px solid var(--gray-200); margin: 22px 0; }
+
+/* Seção no assess-start */
+.topic-card {
+  padding: 14px 18px;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  transition: border-color 0.15s;
+}
+.topic-card:hover { border-color: var(--indigo-300); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     TELA 1 — LOGIN
+═══════════════════════════════════════════════════════ -->
+<div id="screen-login" class="screen active">
+  <div class="login-card">
+    <div class="logo-row">
+      <div class="logo-icon">∑</div>
+      <div>
+        <div class="logo-text">ITS Álgebra Linear</div>
+        <div class="logo-sub">Sistema Tutor Inteligente · Versão MVP</div>
+      </div>
+    </div>
+    <h2 class="login-title">Bem-vindo ao seu tutor! 👋</h2>
+    <p class="login-desc">Insira seu nome para começar. Vamos avaliar seu conhecimento atual e adaptar as explicações ao seu ritmo de aprendizagem.</p>
+    <label class="field-label" for="input-name">Como você se chama?</label>
+    <input id="input-name" class="text-input" type="text" placeholder="Ex: João Silva" autocomplete="off" />
+    <button class="btn btn-primary" id="btn-start" onclick="startSession()" disabled>
+      Começar avaliação diagnóstica →
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TELA 2+ — APP
+═══════════════════════════════════════════════════════ -->
+<div id="screen-app" class="screen">
+  <nav class="app-nav">
+    <div class="nav-logo">
+      <div class="nav-logo-icon">∑</div>
+      ITS Álgebra Linear
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab" id="tab-assess"    onclick="switchTab('assess')">📝 Avaliação</button>
+      <button class="nav-tab" id="tab-dashboard" onclick="switchTab('dashboard')">📊 Dashboard</button>
+      <button class="nav-tab active" id="tab-chat" onclick="switchTab('chat')">💬 Chat Tutor</button>
+    </div>
+    <div class="nav-right">
+      <div class="student-name-nav" id="nav-student-name">—</div>
+      <div class="avatar" id="nav-avatar">?</div>
+    </div>
+  </nav>
+
+  <div class="app-body">
+
+    <!-- ── PAINEL: AVALIAÇÃO ──────────────────────── -->
+    <div id="panel-assess" class="tab-panel active">
+      <div class="assessment-wrap">
+
+        <!-- Estado inicial -->
+        <div id="assess-start">
+          <div class="assess-header">
+            <h1>Avaliação Diagnóstica</h1>
+            <p>Responda as questões abaixo para mapearmos seu conhecimento em Álgebra Linear. Não se preocupe com erros — o objetivo é entender onde você está agora para o tutor se adaptar a você.</p>
+          </div>
+          <div style="background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:32px;margin-bottom:28px;box-shadow:var(--shadow-sm);">
+            <div style="font-size:16px;font-weight:700;color:var(--gray-800);margin-bottom:18px;">Tópicos avaliados</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="topic-card">
+                <span class="tag tag-matrix">Matrizes</span>
+                <div style="margin-top:8px;color:var(--gray-500);font-size:12px;line-height:1.7;">
+                  M1 · Conceitos básicos<br>
+                  M2 · Operações<br>
+                  M3 · Determinantes<br>
+                  M4 · Sistemas lineares
+                </div>
+              </div>
+              <div class="topic-card">
+                <span class="tag tag-vector">Vetores</span>
+                <div style="margin-top:8px;color:var(--gray-500);font-size:12px;line-height:1.7;">
+                  V1–V2 · Conceitos e representação<br>
+                  V3–V4 · Operações e módulo<br>
+                  V5–V6 · Produto escalar e ângulo<br>
+                  V7 · Ortogonalidade
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <button class="btn btn-primary" style="width:auto;padding:13px 32px;" onclick="startAssessment()">Iniciar avaliação →</button>
+            <button class="btn btn-secondary" onclick="skipToResults()">Usar resultado de demonstração</button>
+          </div>
+        </div>
+
+        <!-- Questão -->
+        <div id="assess-question" style="display:none;">
+          <div class="assess-header"><h1>Avaliação Diagnóstica</h1></div>
+          <div class="progress-row">
+            <div class="progress-track"><div class="progress-fill" id="assess-progress-fill" style="width:0%"></div></div>
+            <div class="progress-label" id="assess-progress-label">0 / 11</div>
+          </div>
+          <div class="question-card" id="question-card">
+            <div class="q-node-badge" id="q-node-badge"></div>
+            <div class="q-text" id="q-text">—</div>
+            <div class="q-diff" id="q-diff">dificuldade —</div>
+            <div class="options" id="q-options"></div>
+            <div class="feedback-box" id="q-feedback"></div>
+            <div class="q-actions">
+              <button class="btn btn-primary" id="btn-next" style="display:none;width:auto;padding:11px 28px;" onclick="nextQuestion()">Próxima questão →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resultado -->
+        <div id="assess-result" style="display:none;">
+          <div class="result-hero">
+            <div class="result-icon">🎯</div>
+            <div>
+              <div class="result-title">Avaliação Concluída!</div>
+              <div class="result-subtitle" id="result-subtitle">Seu perfil de aprendizagem foi criado.</div>
+            </div>
+          </div>
+          <div style="font-size:18px;font-weight:700;color:var(--gray-800);margin-bottom:6px;">Domínio por conceito</div>
+          <div style="font-size:13px;color:var(--gray-500);margin-bottom:20px;">Resultado detalhado por nó do grafo de conhecimento</div>
+          <div class="score-grid" id="score-grid"></div>
+          <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap;">
+            <button class="btn btn-success" onclick="goToDashboard()">Ver Dashboard →</button>
+            <button class="btn btn-secondary" onclick="switchTab('chat')">💬 Ir para o Chat Tutor</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── PAINEL: DASHBOARD ──────────────────────── -->
+    <div id="panel-dashboard" class="tab-panel">
+      <div class="dashboard-wrap">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+          <div>
+            <div style="font-size:24px;font-weight:700;color:var(--gray-900);" id="dash-greeting">Olá!</div>
+            <div style="font-size:14px;color:var(--gray-500);margin-top:2px;">Aqui está seu progresso em Álgebra Linear</div>
+          </div>
+          <button class="btn btn-primary" style="width:auto;" onclick="switchTab('chat')">💬 Continuar estudando</button>
+        </div>
+
+        <div class="dash-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-label">Progresso Geral</div>
+            <div class="stat-value" id="stat-overall">—%</div>
+            <div class="stat-sub">média de domínio</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-label">Conceitos Dominados</div>
+            <div class="stat-value" id="stat-mastered">—</div>
+            <div class="stat-sub">de 11 conceitos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-label">Trabalhando em</div>
+            <div class="stat-value" id="stat-current" style="font-size:22px;color:var(--indigo-600);">—</div>
+            <div class="stat-sub" id="stat-current-name">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💬</div>
+            <div class="stat-label">Interações no Chat</div>
+            <div class="stat-value" id="stat-msgs">0</div>
+            <div class="stat-sub">mensagens enviadas</div>
+          </div>
+        </div>
+
+        <div class="dash-lower">
+          <div class="panel">
+            <div class="panel-title">🗺 Grafo de Conhecimento</div>
+            <div id="graph-display"></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:22px;">
+            <div class="panel">
+              <div class="panel-title">📊 Progresso por Área</div>
+              <div id="area-progress"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-title">🕓 Atividade Recente</div>
+              <div id="activity-feed"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAINEL: CHAT ───────────────────────────── -->
+    <div id="panel-chat" class="tab-panel">
+      <div class="chat-wrap">
+        <aside class="chat-sidebar">
+          <div>
+            <div class="chat-sidebar-label">Conceito Atual</div>
+            <div class="current-concept-card">
+              <div class="cc-label">Estudando agora</div>
+              <div class="cc-id" id="cc-id">M1</div>
+              <div class="cc-name" id="cc-name">Conceitos Básicos</div>
+              <div class="mastery-bar-wrap">
+                <div class="mastery-label-row">
+                  <span>Domínio</span>
+                  <span id="cc-pct">0%</span>
+                </div>
+                <div class="mastery-track">
+                  <div class="mastery-fill" id="cc-bar" style="width:0%;background:var(--indigo-500);"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="chat-sidebar-label">Grafo de Progresso</div>
+            <div class="mini-graph-list" id="mini-graph"></div>
+          </div>
+        </aside>
+
+        <div class="chat-main">
+          <div class="chat-header">
+            <div>
+              <div class="chat-header-title">Tutor de Álgebra Linear</div>
+              <div class="chat-header-sub">Adaptado ao seu perfil de aprendizagem</div>
+            </div>
+            <div class="tutor-badge"><div class="status-dot"></div>Tutor online</div>
+          </div>
+          <div class="messages" id="messages"></div>
+          <div class="chat-input-area">
+            <div class="chat-hints" id="chat-hints"></div>
+            <div class="chat-input-row">
+              <textarea class="chat-textarea" id="chat-input" rows="1"
+                placeholder="Faça uma pergunta ao tutor…"
+                onkeydown="handleChatKey(event)"
+                oninput="autoResize(this)"></textarea>
+              <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Enviar (Enter)">
+                <svg width="18" height="18" fill="none" stroke="white" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- app-body -->
+</div><!-- screen-app -->
+
+<div class="toast" id="toast">
+  <span id="toast-icon">✓</span>
+  <span id="toast-text">—</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════ -->
+<script>
+/* ── DADOS ───────────────────────────────────────────── */
+const NODES = [
+  { id:'M1', name:'Conceitos Básicos de Matrizes',  cat:'matrix', prereqs:[] },
+  { id:'M2', name:'Operações com Matrizes',         cat:'matrix', prereqs:['M1'] },
+  { id:'M3', name:'Determinantes',                  cat:'matrix', prereqs:['M2'] },
+  { id:'M4', name:'Sistemas Lineares',              cat:'matrix', prereqs:['M3'] },
+  { id:'V1', name:'Conceitos Básicos de Vetores',   cat:'vector', prereqs:['M1'] },
+  { id:'V2', name:'Representação Vetorial',         cat:'vector', prereqs:['V1'] },
+  { id:'V3', name:'Operações com Vetores',          cat:'vector', prereqs:['V2'] },
+  { id:'V4', name:'Módulo de Vetores',              cat:'vector', prereqs:['V3'] },
+  { id:'V5', name:'Produto Escalar',                cat:'vector', prereqs:['V4'] },
+  { id:'V6', name:'Ângulo entre Vetores',           cat:'vector', prereqs:['V5'] },
+  { id:'V7', name:'Ortogonalidade',                 cat:'vector', prereqs:['V6'] },
+];
+
+const QUESTIONS = [
+  { id:'q_M1', nodeId:'M1', text:'Uma matriz 3×2 possui quantos elementos?',
+    options:['3','5','6','9'], correct:2, diff:'fácil' },
+  { id:'q_M2', nodeId:'M2', text:'Para multiplicar A (2×3) por B (3×4), a matriz resultado terá dimensão:',
+    options:['2×4','3×3','4×2','Impossível — matrizes incompatíveis'], correct:0, diff:'médio' },
+  { id:'q_M3', nodeId:'M3', text:'O determinante de uma matriz identidade 3×3 é:',
+    options:['0','3','1','−1'], correct:2, diff:'fácil' },
+  { id:'q_M4', nodeId:'M4', text:'Um sistema com 3 equações e 2 incógnitas é classificado como:',
+    options:['Subdeterminado','Determinado','Sobredeterminado (pode não ter solução)','Impossível sempre'], correct:2, diff:'difícil' },
+  { id:'q_V1', nodeId:'V1', text:'Um vetor no plano R² é representado por:',
+    options:['Um único número real','Um par ordenado (x, y)','Uma matriz quadrada','Uma equação de reta'], correct:1, diff:'fácil' },
+  { id:'q_V2', nodeId:'V2', text:'A representação gráfica de um vetor é:',
+    options:['Um ponto','Uma reta infinita','Uma seta com direção e sentido','Um segmento sem direção'], correct:2, diff:'fácil' },
+  { id:'q_V3', nodeId:'V3', text:'Dados u = (1, 2) e v = (3, 4), qual é u + v?',
+    options:['(4, 6)','(2, 2)','(3, 8)','(4, 4)'], correct:0, diff:'fácil' },
+  { id:'q_V4', nodeId:'V4', text:'O módulo do vetor v = (3, 4) é:',
+    options:['7','5','1','12'], correct:1, diff:'médio' },
+  { id:'q_V5', nodeId:'V5', text:'Dados u = (1, 0) e v = (0, 1), o produto escalar u · v é:',
+    options:['1','0','−1','√2'], correct:1, diff:'médio' },
+  { id:'q_V6', nodeId:'V6', text:'Se u · v = 0, o ângulo entre u e v é:',
+    options:['0°','45°','90°','180°'], correct:2, diff:'médio' },
+  { id:'q_V7', nodeId:'V7', text:'Dois vetores são ortogonais quando seu produto escalar é:',
+    options:['1','−1','0','Qualquer valor positivo'], correct:2, diff:'fácil' },
+];
+
+const FEEDBACK = {
+  M1:{ ok:'Correto! Matriz m×n tem exatamente m × n elementos.', err:'Dica: multiplique o número de linhas pelo número de colunas.' },
+  M2:{ ok:'Perfeito! A×B é válida quando as colunas de A = linhas de B. Dimensão resultante: (lin. A) × (col. B).', err:'Lembre: para A (m×n) · B (n×p), o resultado é m×p. As dimensões "internas" devem ser iguais.' },
+  M3:{ ok:'Exato! A identidade é o elemento neutro da multiplicação de matrizes, portanto det(I) = 1.', err:'O produto dos elementos da diagonal de I é 1×1×1 = 1. Logo det(I) = 1.' },
+  M4:{ ok:'Correto! Mais equações que incógnitas = sistema sobredeterminado, que pode não ter solução real.', err:'Sistemas sobredeterminados têm mais equações que incógnitas — podem ser inconsistentes.' },
+  V1:{ ok:'Sim! Em R², todo vetor é um par ordenado (x, y) que representa uma direção e magnitude.', err:'Em R², um vetor precisa de dois componentes (x, y) para descrever direção e sentido.' },
+  V2:{ ok:'Correto! A seta representa visualmente a direção, sentido e magnitude do vetor.', err:'Vetores são representados por setas — a ponta indica o sentido, o comprimento indica a magnitude.' },
+  V3:{ ok:'Muito bem! Soma de vetores: some cada componente separadamente.', err:'Para somar vetores, some as componentes: (1+3, 2+4) = (4, 6).' },
+  V4:{ ok:'Certo! |v| = √(3² + 4²) = √(9+16) = √25 = 5. É o Teorema de Pitágoras!', err:'Use |v| = √(vₓ² + v_y²) → √(9 + 16) = √25 = 5.' },
+  V5:{ ok:'Correto! Vetores dos eixos coordenados são perpendiculares → produto escalar zero.', err:'Produto escalar: u · v = u₁v₁ + u₂v₂ = 1·0 + 0·1 = 0.' },
+  V6:{ ok:'Exato! Se u · v = 0, então cos(θ) = 0, portanto θ = 90°.', err:'Use cos(θ) = (u·v) / (|u|·|v|). Se u·v = 0, então cos(θ) = 0 → θ = 90°.' },
+  V7:{ ok:'Correto! Ortogonalidade ↔ produto escalar nulo ↔ ângulo de 90° entre os vetores.', err:'Dois vetores são ortogonais (perpendiculares) quando u · v = 0.' },
+};
+
+/* ── ESTADO DO SISTEMA ───────────────────────────────── */
+const API = 'http://localhost:3001'; // Backend NestJS
+
+let student = {
+  name: '',
+  sessionId: '',
+  currentConcept: 'M1',
+  mastery: Object.fromEntries(NODES.map(n => [n.id, 0])),
+  chatHistory: [],
+  activityLog: [],
+  msgCount: 0,
+};
+let assessState = { active:false, qIndex:0, selectedAnswer:null, answered:false, assessmentId:null };
+let chatInitialized = false;
+let isWaiting = false;
+
+/* ── LOGIN ───────────────────────────────────────────── */
+const inputName = document.getElementById('input-name');
+inputName.addEventListener('input', () => {
+  document.getElementById('btn-start').disabled = inputName.value.trim().length < 2;
+});
+inputName.addEventListener('keydown', e => { if (e.key === 'Enter' && inputName.value.trim().length >= 2) startSession(); });
+
+async function startSession() {
+  const name = inputName.value.trim();
+  if (name.length < 2) return;
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('btn-start').textContent = 'Conectando…';
+
+  try {
+    // Cria aluno no backend e obtém sessionId persistente
+    const res = await fetch(`${API}/students`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    });
+    if (!res.ok) throw new Error('Erro ao criar aluno');
+    const data = await res.json();
+
+    student.name      = data.name;
+    student.sessionId = data.sessionId;
+    student.mastery   = data.mastery || Object.fromEntries(NODES.map(n => [n.id, 0]));
+    student.currentConcept = data.currentConceptId || 'M1';
+
+    // Salva sessionId no localStorage para reconectar ao recarregar
+    localStorage.setItem('its_session', data.sessionId);
+    localStorage.setItem('its_name', data.name);
+
+  } catch (err) {
+    // Fallback: modo offline sem backend
+    console.warn('Backend indisponível, rodando em modo local:', err.message);
+    student.name = name;
+    student.sessionId = 'local_' + Date.now();
+  }
+
+  document.getElementById('nav-student-name').textContent = student.name;
+  document.getElementById('nav-avatar').textContent = student.name.charAt(0).toUpperCase();
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-app').classList.add('active');
+  switchTab('assess');
+}
+
+// Ao carregar a página, verifica se há sessão salva
+window.addEventListener('load', async () => {
+  const savedSession = localStorage.getItem('its_session');
+  const savedName    = localStorage.getItem('its_name');
+  if (!savedSession || !savedName) return;
+
+  try {
+    const res = await fetch(`${API}/students/${savedSession}/progress`);
+    if (!res.ok) return;
+    const data = await res.json();
+
+    student.name           = data.student.name;
+    student.sessionId      = savedSession;
+    student.mastery        = data.mastery;
+    student.currentConcept = data.student.currentConceptId;
+
+    // Restaura sessão automaticamente
+    document.getElementById('nav-student-name').textContent = student.name;
+    document.getElementById('nav-avatar').textContent = student.name.charAt(0).toUpperCase();
+    document.getElementById('screen-login').classList.remove('active');
+    document.getElementById('screen-app').classList.add('active');
+    showToast(`Bem-vindo de volta, ${student.name}! 👋`, 'indigo');
+    switchTab('dashboard');
+  } catch (err) {
+    // Sessão expirada ou backend offline — ignora e mostra login normalmente
+  }
+});
+
+/* ── NAVEGAÇÃO ───────────────────────────────────────── */
+function switchTab(tab) {
+  ['assess','dashboard','chat'].forEach(t => {
+    document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
+    document.getElementById(`panel-${t}`).classList.toggle('active', t === tab);
+  });
+  if (tab === 'dashboard') renderDashboard();
+  if (tab === 'chat') initChat();
+}
+
+/* ── AVALIAÇÃO ───────────────────────────────────────── */
+function startAssessment() {
+  assessState = { active:true, qIndex:0, selectedAnswer:null, answered:false };
+  document.getElementById('assess-start').style.display = 'none';
+  document.getElementById('assess-question').style.display = 'block';
+  renderQuestion();
+}
+
+function skipToResults() {
+  student.mastery = { M1:100, M2:80, M3:60, M4:20, V1:0, V2:0, V3:0, V4:0, V5:0, V6:0, V7:0 };
+  updateCurrentConcept();
+  showAssessResult();
+  // Muda para tela de resultado diretamente
+  document.getElementById('assess-start').style.display = 'none';
+  document.getElementById('assess-result').style.display = 'block';
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[assessState.qIndex];
+  const total = QUESTIONS.length;
+  document.getElementById('assess-progress-fill').style.width = ((assessState.qIndex / total) * 100) + '%';
+  document.getElementById('assess-progress-label').textContent = `${assessState.qIndex} / ${total}`;
+  const node = NODES.find(n => n.id === q.nodeId);
+  document.getElementById('q-node-badge').innerHTML =
+    `<span class="tag tag-${node.cat}">${q.nodeId}</span>`;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-diff').textContent = `dificuldade: ${q.diff}`;
+  const letters = ['A','B','C','D'];
+  document.getElementById('q-options').innerHTML = q.options.map((opt, i) => `
+    <button class="option" id="opt-${i}" onclick="selectOption(${i})">
+      <span class="option-letter">${letters[i]}</span>${opt}
+    </button>`).join('');
+  document.getElementById('q-feedback').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'none';
+  assessState.selectedAnswer = null;
+  assessState.answered = false;
+}
+
+function selectOption(idx) {
+  if (assessState.answered) return;
+  const q = QUESTIONS[assessState.qIndex];
+  assessState.selectedAnswer = idx;
+  assessState.answered = true;
+  const isCorrect = idx === q.correct;
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById(`opt-${i}`);
+    if (!el) continue;
+    el.classList.remove('selected','correct','wrong');
+    el.disabled = true;
+    if (i === q.correct) el.classList.add('correct');
+    else if (i === idx && !isCorrect) el.classList.add('wrong');
+  }
+  const fb = document.getElementById('q-feedback');
+  const tips = FEEDBACK[q.nodeId];
+  fb.className = `feedback-box ${isCorrect ? 'correct' : 'wrong'}`;
+  fb.innerHTML = isCorrect
+    ? `✅ ${tips.ok}`
+    : `❌ Resposta incorreta. A correta é: <strong>${q.options[q.correct]}</strong>.<br><em>${tips.err}</em>`;
+  fb.style.display = 'block';
+  student.mastery[q.nodeId] = isCorrect ? 100 : 0;
+  document.getElementById('btn-next').style.display = 'block';
+}
+
+function nextQuestion() {
+  assessState.qIndex++;
+  if (assessState.qIndex >= QUESTIONS.length) {
+    updateCurrentConcept();
+    showAssessResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function updateCurrentConcept() {
+  for (const node of NODES) {
+    if (student.mastery[node.id] < 80) { student.currentConcept = node.id; return; }
+  }
+  student.currentConcept = NODES[NODES.length - 1].id;
+}
+
+function showAssessResult() {
+  document.getElementById('assess-question').style.display = 'none';
+  document.getElementById('assess-result').style.display = 'block';
+  const mastered = NODES.filter(n => student.mastery[n.id] >= 80).length;
+  document.getElementById('result-subtitle').textContent =
+    `Você domina ${mastered} de ${NODES.length} conceitos. O tutor vai focar nos pontos onde você ainda pode crescer!`;
+  document.getElementById('score-grid').innerHTML = NODES.map(n => {
+    const m = student.mastery[n.id];
+    const col = nodeColor(m);
+    return `<div class="score-card fade-up">
+      <div class="score-card-top">
+        <div class="score-card-id"><span class="tag tag-${n.cat}">${n.id}</span></div>
+        <div class="score-card-pct" style="color:${col}">${m}%</div>
+      </div>
+      <div class="score-card-name">${n.name}</div>
+      <div class="mini-bar"><div class="mini-fill" style="width:${m}%;background:${col}"></div></div>
+    </div>`;
+  }).join('');
+  student.activityLog.unshift({ text:`Avaliação diagnóstica concluída: ${mastered}/11 dominados`, time:'agora', color:'var(--indigo-500)' });
+  showToast('✓ Avaliação concluída! Perfil criado.', 'indigo');
+  // Atualiza progress bar para 100%
+  document.getElementById('assess-progress-fill').style.width = '100%';
+  document.getElementById('assess-progress-label').textContent = `${QUESTIONS.length} / ${QUESTIONS.length}`;
+}
+
+function goToDashboard() { switchTab('dashboard'); }
+
+/* ── DASHBOARD ───────────────────────────────────────── */
+function renderDashboard() {
+  document.getElementById('dash-greeting').textContent = `Olá, ${student.name}! 👋`;
+  const ms = NODES.map(n => student.mastery[n.id]);
+  const avg = Math.round(ms.reduce((a,b) => a+b, 0) / ms.length);
+  const mastered = ms.filter(m => m >= 80).length;
+  const curNode = NODES.find(n => n.id === student.currentConcept);
+  document.getElementById('stat-overall').textContent = avg + '%';
+  document.getElementById('stat-mastered').textContent = mastered;
+  document.getElementById('stat-current').textContent = student.currentConcept;
+  document.getElementById('stat-current-name').textContent = curNode?.name ?? '—';
+  document.getElementById('stat-msgs').textContent = student.msgCount;
+  renderGraph();
+  renderAreaProgress();
+  renderActivityFeed();
+}
+
+function nodeColor(m) {
+  if (m >= 80) return 'var(--green-500)';
+  if (m >= 40) return 'var(--amber-500)';
+  if (m > 0)  return 'var(--red-500)';
+  return 'var(--gray-300)';
+}
+
+function renderGraph() {
+  const container = document.getElementById('graph-display');
+  const branch = (nodes, label, tagClass) =>
+    `<div style="margin-bottom:18px;">
+      <div style="font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">${label}</div>
+      ${nodes.map((n, i) => {
+        const m = student.mastery[n.id]; const col = nodeColor(m); const cur = n.id === student.currentConcept;
+        return `${i > 0 ? '<div class="graph-connector"></div>' : ''}
+          <div class="graph-node ${cur ? 'current' : ''}">
+            <div class="graph-dot" style="background:${col}"></div>
+            <div class="graph-node-id"><span class="tag tag-${n.cat}" style="font-size:10px;">${n.id}</span></div>
+            <div class="graph-node-name">${n.name}${cur ? ' <span style="font-size:10px;color:var(--indigo-500);font-weight:700;">← atual</span>' : ''}</div>
+            <div class="graph-node-pct" style="color:${col}">${m > 0 ? m+'%' : '—'}</div>
+          </div>
+          <div class="graph-bar"><div class="graph-bar-fill" style="width:${m}%;background:${col}"></div></div>`;
+      }).join('')}
+    </div>`;
+  container.innerHTML =
+    branch(NODES.filter(n => n.cat === 'matrix'), 'Ramo — Matrizes', 'matrix') +
+    branch(NODES.filter(n => n.cat === 'vector'), 'Ramo — Vetores', 'vector');
+}
+
+function renderAreaProgress() {
+  const avg = (arr) => Math.round(arr.reduce((a,b)=>a+b,0)/arr.length);
+  const mAvg = avg(NODES.filter(n=>n.cat==='matrix').map(n=>student.mastery[n.id]));
+  const vAvg = avg(NODES.filter(n=>n.cat==='vector').map(n=>student.mastery[n.id]));
+  document.getElementById('area-progress').innerHTML = ['matrix','vector'].map((cat,i) => {
+    const a = i === 0 ? mAvg : vAvg;
+    const label = i === 0 ? 'Matrizes' : 'Vetores';
+    const tagClass = `tag-${cat}`;
+    const col = nodeColor(a);
+    return `<div style="margin-bottom:${i===0?'18px':'0'}">
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:8px;">
+        <span><span class="tag ${tagClass}" style="margin-right:8px;">${i===0?'M':'V'}</span>${label}</span>
+        <span style="color:${col}">${a}%</span>
+      </div>
+      <div class="mastery-track"><div class="mastery-fill" style="width:${a}%;background:${col}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderActivityFeed() {
+  const feed = document.getElementById('activity-feed');
+  if (!student.activityLog.length) {
+    feed.innerHTML = '<div style="font-size:13px;color:var(--gray-400);padding:6px 0;">Nenhuma atividade ainda. Comece pela avaliação!</div>';
+    return;
+  }
+  feed.innerHTML = student.activityLog.slice(0,6).map(a =>
+    `<div class="activity-item">
+      <div class="activity-dot" style="background:${a.color}"></div>
+      <div>
+        <div class="activity-text">${a.text}</div>
+        <div class="activity-time">${a.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── CHAT ────────────────────────────────────────────── */
+function initChat() {
+  updateChatSidebar();
+  if (!chatInitialized) {
+    chatInitialized = true;
+    const curNode = NODES.find(n => n.id === student.currentConcept);
+    const m = student.mastery[student.currentConcept];
+    addMessage('assistant', buildWelcome(student.name, curNode, m));
+    updateHints();
+  }
+}
+
+function buildWelcome(name, node, m) {
+  const lvl = m >= 80 ? `Você já domina bem **${node.id} — ${node.name}**! Vamos consolidar e avançar.`
+    : m >= 40 ? `Você tem domínio parcial (${m}%) em **${node.id} — ${node.name}**. Vamos praticar mais!`
+    : `Vamos começar com **${node.id} — ${node.name}**. Construímos juntos, sem pressa!`;
+  return `Olá, **${name}**! 👋 Sou seu tutor de Álgebra Linear.\n\n${lvl}\n\nComo posso ajudar?\n- Explicar um conceito\n- Criar um exercício personalizado\n- Corrigir uma resposta\n- Dar dicas passo a passo\n\nBasta perguntar!`;
+}
+
+function updateChatSidebar() {
+  const curNode = NODES.find(n => n.id === student.currentConcept);
+  const m = student.mastery[student.currentConcept];
+  document.getElementById('cc-id').textContent = student.currentConcept;
+  document.getElementById('cc-name').textContent = curNode?.name ?? '—';
+  document.getElementById('cc-pct').textContent = m + '%';
+  const bar = document.getElementById('cc-bar');
+  bar.style.width = m + '%';
+  bar.style.background = nodeColor(m);
+  document.getElementById('mini-graph').innerHTML = NODES.map(n => {
+    const mv = student.mastery[n.id]; const cur = n.id === student.currentConcept;
+    return `<div class="mg-item ${cur ? 'current' : ''}">
+      <div class="mg-dot" style="background:${nodeColor(mv)}"></div>
+      <span style="flex:1;font-size:12px;">${n.id} <span style="font-size:11px;color:var(--gray-400);">${n.name.split(' ').slice(0,2).join(' ')}</span></span>
+      <span class="mg-pct" style="color:${nodeColor(mv)}">${mv > 0 ? mv+'%' : '—'}</span>
+    </div>`;
+  }).join('');
+}
+
+function updateHints() {
+  const m = student.mastery[student.currentConcept];
+  const id = student.currentConcept;
+  const hints = m < 40
+    ? [`Explique ${id} do zero`, `Dê um exemplo simples de ${id}`, 'Quais são os pré-requisitos?']
+    : m < 80
+    ? [`Crie um exercício de ${id}`, `Qual a fórmula principal de ${id}?`, 'Onde costumo errar mais?']
+    : [`Exercício avançado de ${id}`, 'Quando vou para o próximo conceito?', 'Como isso se aplica na prática?'];
+  document.getElementById('chat-hints').innerHTML = hints.map(h =>
+    `<button class="hint-btn" onclick="useHint('${h}')">${h}</button>`).join('');
+}
+
+function useHint(t) { document.getElementById('chat-input').value = t; sendMessage(); }
+
+/* ── RENDERIZAR MENSAGEM COM LATEX ───────────────────── */
+function addMessage(role, content, delta) {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = `msg ${role} fade-up`;
+  const initials = role === 'assistant' ? '∑' : (student.name.charAt(0).toUpperCase() || '?');
+  const html = renderContent(content, role);
+  let badge = '';
+  if (delta !== undefined && delta !== 0) {
+    const up = delta > 0;
+    badge = `<div class="mastery-badge ${up ? 'up' : 'down'}">${up ? '↑' : '↓'} ${up?'+':''}${delta}% domínio em ${student.currentConcept}</div>`;
+  }
+  div.innerHTML = `<div class="msg-avatar">${initials}</div><div class="msg-bubble">${html}${badge}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  student.msgCount++;
+  // Tipeset MathJax nos novos elementos
+  if (window.MathJax && window.MathJax.typesetPromise) {
+    window.MathJax.typesetPromise([div]).catch(() => {});
+  }
+  document.getElementById('stat-msgs').textContent = student.msgCount;
+}
+
+/**
+ * renderContent: converte markdown + LaTeX em HTML legível.
+ * Trata:
+ *   - Blocos LaTeX $$...$$ e \[...\] → div.math-block
+ *   - Inline $...$ e \(...\) → span (MathJax cuida)
+ *   - **negrito**, *itálico*, `código`
+ *   - Listas com - ou •
+ *   - Quebras de parágrafo
+ */
+function renderContent(text, role) {
+  // 1. Protege blocos display-math antes de processar o restante
+  const mathBlocks = [];
+  text = text.replace(/\$\$[\s\S]*?\$\$/g, m => { mathBlocks.push(m); return `@@MATH${mathBlocks.length-1}@@`; });
+  text = text.replace(/\\\[[\s\S]*?\\\]/g, m => { mathBlocks.push(m); return `@@MATH${mathBlocks.length-1}@@`; });
+
+  // 2. Markdown básico
+  text = text
+    .replace(/\*\*(.*?)\*\*/gs, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/gs, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  // 3. Listas
+  text = text.replace(/((?:^|\n)[•\-]\s.+)+/g, match => {
+    const items = match.trim().split(/\n[•\-]\s/).map((s,i) => `<li>${i===0?s.replace(/^[•\-]\s/,''):s}</li>`);
+    return `<ul style="padding-left:18px;margin:8px 0;">${items.join('')}</ul>`;
+  });
+
+  // 4. Parágrafos
+  text = text.replace(/\n\n+/g, '</p><p>').replace(/\n/g, '<br>');
+  text = `<p>${text}</p>`;
+
+  // 5. Restaura blocos de math como div destacado
+  text = text.replace(/@@MATH(\d+)@@/g, (_, i) => {
+    const src = mathBlocks[parseInt(i)];
+    return `</p><div class="math-block">${src}</div><p>`;
+  });
+
+  // Limpa parágrafos vazios
+  text = text.replace(/<p><\/p>/g, '').replace(/<p>\s*<\/p>/g, '');
+
+  return text;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.id = 'typing-indicator'; div.className = 'msg assistant';
+  div.innerHTML = `<div class="msg-avatar">∑</div>
+    <div class="msg-bubble"><div class="typing-indicator">
+      <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+    </div></div>`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+function removeTyping() { document.getElementById('typing-indicator')?.remove(); }
+
+async function sendMessage() {
+  if (isWaiting) return;
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = ''; input.style.height = 'auto';
+  document.getElementById('send-btn').disabled = true;
+  isWaiting = true;
+  addMessage('user', text);
+  showTyping();
+
+  try {
+    const result = await callLLM(text);
+    removeTyping();
+
+    const { text: reply, delta, nodeId } = result;
+
+    if (delta !== 0) {
+      const prev = student.mastery[student.currentConcept];
+      student.mastery[student.currentConcept] = Math.max(0, Math.min(100, prev + delta));
+      if (student.mastery[student.currentConcept] >= 80 && prev < 80) {
+        student.activityLog.unshift({ text:`Conceito ${student.currentConcept} dominado! ✅`, time:'agora', color:'var(--green-500)' });
+        showToast(`🎉 ${student.currentConcept} dominado! Parabéns!`, 'green');
+        setTimeout(async () => {
+          // Recarrega progresso do backend para pegar currentConceptId atualizado
+          try {
+            const res = await fetch(`${API}/students/${student.sessionId}/progress`);
+            const data = await res.json();
+            student.mastery = data.mastery;
+            student.currentConcept = data.student.currentConceptId;
+          } catch {}
+          updateChatSidebar(); updateHints();
+        }, 1200);
+      }
+      student.activityLog.unshift({ text:`Chat: ${delta>0?'+':''}${delta}% em ${student.currentConcept}`, time:'agora', color: delta>0 ? 'var(--green-500)' : 'var(--red-500)' });
+      updateChatSidebar();
+    }
+
+    addMessage('assistant', reply, delta !== 0 ? delta : undefined);
+  } catch (err) {
+    removeTyping();
+    const msg = err.message || '';
+    let guidance;
+    if (msg.includes('inválida') || msg.includes('403') || msg.includes('permissão')) {
+      guidance = `**Chave de API inválida.** Verifique se a \`GEMINI_API_KEY\` no arquivo \`.env.local\` está correta e sem espaços extras.`;
+    } else if (msg.includes('429') || msg.includes('Limite')) {
+      guidance = `**Limite de requisições atingido.** Aguarde alguns segundos e tente novamente.`;
+    } else if (msg.includes('não encontrada') || msg.includes('.env')) {
+      guidance = `**Chave não configurada.** Verifique se o arquivo \`.env.local\` existe na pasta do projeto com o conteúdo:\n\`GEMINI_API_KEY=sua_chave_aqui\``;
+    } else {
+      guidance = `**Erro ao conectar com a API Gemini.**\n\nDetalhes: ${msg}\n\nConfira se:\n- O arquivo \`.env.local\` existe na pasta do projeto\n- A chave \`GEMINI_API_KEY\` está correta\n- O servidor está rodando com \`npx vercel dev\``;
+    }
+    addMessage('assistant', `⚠️ ${guidance}`);
+  }
+  isWaiting = false;
+  document.getElementById('send-btn').disabled = false;
+  updateHints();
+}
+
+async function callLLM(userMessage) {
+  // Chama backend NestJS (persiste no MongoDB)
+  const response = await fetch(`${API}/chat/message`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      sessionId: student.sessionId,
+      content: userMessage,
+      nodeId: student.currentConcept,
+    }),
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || data.message || `Erro ${response.status}`);
+  }
+
+  const data = await response.json();
+  return { text: data.content, delta: data.masteryDelta || 0, nodeId: data.nodeId };
+}
+
+/* ── UTILITÁRIOS ─────────────────────────────────────── */
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+let toastTimer;
+function showToast(text, type = 'indigo') {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = text;
+  t.className = `toast show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3800);
+}
+</script>
+</body>
+</html>
