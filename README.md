@@ -1,47 +1,77 @@
-# ITS Backend — NestJS + MongoDB
+# ITS — Sistema Tutor Inteligente para Álgebra Linear
+
+Sistema desenvolvido para a Unidade 3 da disciplina de Sistemas Tutores Inteligentes.
+O tutor cobre os conteúdos de Matrizes e Vetores, avalia o conhecimento do aluno e adapta as explicações ao seu nível de domínio.
+
+## Integrantes
+
+- Isabelly
+- Gustavo
+- Luiz Gustavo
+
+## Tecnologias
+
+- Frontend: HTML, CSS, JavaScript, MathJax
+- Backend: NestJS, TypeScript
+- Banco de dados: MongoDB
+- IA: Google Gemini 2.5 Flash
 
 ## Pré-requisitos
-- Node.js 18+
-- MongoDB rodando em localhost:27017
-  - Windows: baixe em mongodb.com/try/download/community
-  - Ou use MongoDB Atlas (nuvem gratuita): mongodb.com/atlas
+
+- Node.js 18 ou superior
+- MongoDB instalado e rodando
+- Chave da API do Google Gemini (gratuita em aistudio.google.com)
 
 ## Como rodar
 
-### 1. Criar o .env
-```cmd
+### 1. Clone o repositório
+
+git clone https://github.com/bellynhaoliver/project-its-algebra-linear.git
+cd project-its-algebra-linear
+
+### 2. Configure o backend
+
+cd backend
 copy .env.example .env
-```
-Edite o `.env` e coloque sua `GEMINI_API_KEY`.
 
-### 2. Instalar dependências
-```cmd
+Abra o arquivo .env e coloque sua chave do Gemini no campo GEMINI_API_KEY.
+
 npm install
-```
-
-### 3. Compilar
-```cmd
 npm run build
-```
-
-### 4. Iniciar
-```cmd
 npm start
-```
 
-O backend estará em: http://localhost:3001
+O backend vai rodar em http://localhost:3001
 
-## Endpoints disponíveis
+### 3. Configure o frontend
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| POST | /students | Cria aluno |
-| GET | /students/:sessionId/progress | Progresso do aluno |
-| PATCH | /students/:sessionId/mastery | Atualiza domínio |
-| POST | /assessment/start | Inicia avaliação |
-| POST | /assessment/answer | Responde questão |
-| GET | /assessment/:id/result | Resultado |
-| POST | /chat/message | Envia mensagem ao tutor |
-| GET | /chat/history/:sessionId | Histórico do chat |
-| GET | /knowledge-graph | Grafo completo |
-| GET | /knowledge-graph/student/:sessionId | Grafo do aluno |
+Abra outro terminal:
+
+cd frontend
+node server.js
+
+O frontend vai rodar em http://localhost:3000
+
+### 4. Inicie o MongoDB
+
+Abra outro terminal e execute:
+
+mongod
+
+### 5. Acesse o sistema
+
+Abra o navegador em http://localhost:3000
+
+## Variáveis de ambiente
+
+Crie o arquivo .env dentro da pasta backend com base no .env.example:
+
+PORT=3001
+MONGODB_URI=mongodb://localhost:27017/its_algebra
+GEMINI_API_KEY=sua_chave_aqui
+GEMINI_MODEL=gemini-2.5-flash
+
+## Observações
+
+- O arquivo .env nunca deve ser enviado ao GitHub
+- O arquivo .env.local dentro do frontend também não deve ser enviado
+- Cada integrante precisa criar seu próprio .env com sua chave do Gemini
